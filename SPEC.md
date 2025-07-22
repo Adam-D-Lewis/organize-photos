@@ -1,0 +1,75 @@
+# Image Organization CLI Tool Specification
+
+## 1. Core Functionality
+
+Create a Python-based CLI tool that provides the following capabilities:
+- Recursively search one or more source directories for JPEG images (`.jpg`, `.jpeg`).
+- Organize the discovered images into a destination directory based on their creation date.
+- Detect and report duplicate images found within the source directories.
+
+## 2. Date-Based Organization
+
+- **Date Source**: The tool will attempt to read the `DateTimeOriginal` tag from the image's EXIF metadata.
+- **Folder Structure**: Images will be organized into a `YYYY/MM/DD` folder structure within the specified destination directory.
+- **Handling Missing Dates**: If the EXIF date information is not available for an image, the file will be moved to a subfolder named `missing_date` within the destination directory.
+
+## 3. Duplicate Detection
+
+- **Identification Method**: Duplicate images will be identified by calculating the SHA256 hash of each file. Files with identical hashes are considered duplicates.
+- **Handling Duplicates**: The tool will not move, delete, or alter duplicate files. It will only list them in a report.
+- **Duplicate Report**: A CSV file named `duplicates.csv` will be generated in the root of the destination directory. This report will list the file paths of all duplicate images, grouped by hash. The CSV file will have two columns: `hash` and `file_path`.
+
+## 4. Command-Line Interface
+
+- The tool will be invoked from the command line.
+- **Source Directories**: The user will specify one or more source directories using the `--source` argument. Multiple `--source` arguments can be provided.
+- **Destination Directory**: The user will specify the destination directory using the `--destination` argument. This argument is required.
+- **Copy Option**: The user can specify the `--copy` flag to copy files instead of moving them.
+- **Example Usage**:
+  ```bash
+  organize-photos --source /path/to/first/album --source /path/to/second/album --destination /path/to/organized-photos --copy
+  ```
+
+## 5. Logging and Output
+
+- **Progress Indication**: The tool will display a progress bar to show the user how many files have been processed out of the total number of files found.
+- **Error Logging**: Any errors that occur during processing (e.g., file read errors, permission issues) will be logged to a file named `errors.log` in the destination directory. The tool will not stop if it encounters an error with a single file; it will log the error and continue.
+
+## 6. Conflict Resolution
+
+- **File Name Conflicts**: If a file is to be moved to a destination where a file with the same name already exists, the tool will rename the new file by appending a hyphen and a number to the base name (e.g., `image.jpg` becomes `image-1.jpg`, then `image-2.jpg`, and so on).
+
+## 7. Implementation Tasks
+
+- [x] **CLI Argument Parsing**:
+  - [x] Implement `argparse` or `click` to handle `--source` (multiple) and `--destination` arguments.
+  - [x] Add a `--copy` flag to allow copying files instead of moving.
+- [x] **File Discovery**:
+  - [x] Create a function to recursively scan source directories.
+  - [x] Filter for files with `.jpg` and `.jpeg` extensions.
+- [x] **EXIF Data Extraction**:
+  - [x] Implement a function to read the `DateTimeOriginal` tag from a JPEG file's EXIF data.
+  - [x] Use a library like `Pillow` or `exifread`.
+- [x] **Date-Based Directory Structure**:
+  - [x] Create a function to generate the `YYYY/MM/DD` path from a datetime object.
+  - [x] Ensure the destination directory and subdirectories are created if they don't exist.
+- [x] **File Moving Logic**:
+  - [x] Implement the logic to move a file to its new destination.
+  - [x] Handle files with missing EXIF data by moving them to the `missing_date` directory.
+- [x] **File Name Conflict Resolution**:
+  - [x] Before moving, check if a file with the same name exists at the destination.
+  - [x] If it exists, generate a new unique name (e.g., `image-1.jpg`).
+- [x] **Duplicate Detection (Hashing)**:
+  - [x] Implement a function to calculate the SHA256 hash of a file.
+  - [x] Store hashes to detect duplicates.
+- [x] **Duplicate Reporting**:
+  - [x] After processing all files, generate a `duplicates.csv` file.
+  - [x] The report should list the hash and file path for all identified duplicates.
+- [x] **Progress Indication**:
+  - [x] Integrate a progress bar (e.g., using `tqdm`) to show file processing progress.
+- [x] **Error Logging**:
+  - [x] Set up logging to write errors to `errors.log` in the destination directory.
+  - [x] Wrap file operations in `try...except` blocks to catch and log errors without crashing.
+- [x] **Main Application Logic**:
+  - [x] Tie all the components together in the main CLI function.
+  - [x] Orchestrate the flow: find files, process each file (get date, move, hash), and finally generate the duplicate report.
