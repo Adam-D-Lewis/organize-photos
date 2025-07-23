@@ -72,7 +72,7 @@ def test_create_date_based_directory(tmp_path):
 
     date_dir = create_date_based_directory(destination, test_date)
 
-    expected_dir = destination / "2023" / "10" / "26"
+    expected_dir = destination / "2023-10"
     assert date_dir == expected_dir
     assert expected_dir.is_dir()
 
@@ -91,7 +91,7 @@ def test_move_image_with_date(tmp_path):
 
     transfer_file(image_path, destination_dir, test_date, copy=False)
 
-    expected_dir = destination_dir / "2023" / "10" / "26"
+    expected_dir = destination_dir / "2023-10"
     assert (expected_dir / "test.jpg").is_file()
     assert not image_path.exists()
 
@@ -209,7 +209,7 @@ def test_copy_image_with_date(tmp_path):
 
     transfer_file(image_path, destination_dir, test_date, copy=True)
 
-    expected_dir = destination_dir / "2023" / "10" / "26"
+    expected_dir = destination_dir / "2023-10"
     assert (expected_dir / "test.jpg").is_file()
     assert image_path.exists()
 

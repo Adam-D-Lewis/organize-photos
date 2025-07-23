@@ -57,7 +57,7 @@ def main(source: tuple[Path, ...], destination: Path, copy: bool):
         format="%(asctime)s - %(message)s",
     )
 
-    click.echo(f"Scanning {source} for images...")
+    click.echo(f"Scanning {', '.join(str(s) for s in source)} for images...")
     image_files = list(find_image_files(source))
     if not image_files:
         click.echo("No image files found.")

@@ -34,12 +34,10 @@ def get_exif_date(image_path):
 
 
 def create_date_based_directory(destination_dir: Path, date: datetime) -> Path:
-    """Create a date-based directory (YYYY/MM/DD) if it doesn't exist."""
-    year_dir = destination_dir / str(date.year)
-    month_dir = year_dir / f"{date.month:02d}"
-    day_dir = month_dir / f"{date.day:02d}"
-    day_dir.mkdir(parents=True, exist_ok=True)
-    return day_dir
+    """Create a date-based directory (YYYY-MM) if it doesn't exist."""
+    month_dir = destination_dir / f"{date.year}-{date.month:02d}"
+    month_dir.mkdir(parents=True, exist_ok=True)
+    return month_dir
 
 
 def get_unique_filename(destination_path: Path) -> Path:
