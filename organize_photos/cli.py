@@ -71,13 +71,13 @@ def main(source: tuple[Path, ...], destination: Path, copy: bool):
             try:
                 # 1. Calculate hash
                 file_hash = calculate_hash(image_file)
-                hashes[file_hash].append(image_file)
 
                 # 2. Get EXIF date
                 date = get_exif_date(image_file)
 
                 # 3. Move or copy file
-                transfer_file(image_file, destination, date, copy)
+                new_path = transfer_file(image_file, destination, date, copy)
+                hashes[file_hash].append((image_file, new_path))
 
             except Exception as e:
                 logging.error(f"Error processing {image_file}: {e}")

@@ -60,7 +60,7 @@ def get_unique_filename(destination_path: Path) -> Path:
 
 def transfer_file(
     image_path: Path, destination_dir: Path, date: datetime | None, copy: bool
-):
+) -> Path:
     """Move or copy an image to the appropriate directory."""
     if date:
         target_dir = create_date_based_directory(destination_dir, date)
@@ -74,6 +74,7 @@ def transfer_file(
         shutil.copy2(str(image_path), str(destination_path))
     else:
         shutil.move(str(image_path), str(destination_path))
+    return destination_path
 
 
 def calculate_hash(image_path: Path) -> str:
@@ -86,14 +87,14 @@ def calculate_hash(image_path: Path) -> str:
 
 
 def write_duplicate_report(
-    destination_dir: Path, duplicates: defaultdict[str, list[Path]]
+    destination_dir: Path, duplicates: defaultdict[str, list[tuple[Path, Path]]]
 ):
     """Write a report of duplicate files to duplicates.csv."""
     report_path = destination_dir / "duplicates.csv"
     with open(report_path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["hash", "file_path"])
+        writer.writerow(["hash", "new_filepath", "old_filepath"])
         for hash_val, file_list in duplicates.items():
             if len(file_list) > 1:
-                for file_path in file_list:
-                    writer.writerow([hash_val, str(file_path)])
+                for old_path, new_path in file_list:
+                    writer.writerow([hash_val, str(new_path), str(old_path)])

@@ -170,9 +170,10 @@ def test_write_duplicate_report(tmp_path):
     file5 = p / "another" / "file5.jpg"
 
     duplicates = defaultdict(list)
-    duplicates["hash1"].extend([file1, file2])
-    duplicates["hash2"].append(file3)  # Not a duplicate
-    duplicates["hash3"].extend([file4, file5])
+    # The "old" paths don't matter here, so we'll just make them the same as the new
+    duplicates["hash1"].extend([(file1, file1), (file2, file2)])
+    duplicates["hash2"].append((file3, file3))  # Not a duplicate
+    duplicates["hash3"].extend([(file4, file4), (file5, file5)])
 
     write_duplicate_report(destination_dir, duplicates)
 
@@ -182,14 +183,14 @@ def test_write_duplicate_report(tmp_path):
     with open(report_path, "r", newline="") as f:
         reader = csv.reader(f)
         header = next(reader)
-        assert header == ["hash", "file_path"]
+        assert header == ["hash", "new_filepath", "old_filepath"]
 
         rows = {tuple(row) for row in reader}
         expected_rows = {
-            ("hash1", str(file1)),
-            ("hash1", str(file2)),
-            ("hash3", str(file4)),
-            ("hash3", str(file5)),
+            ("hash1", str(file1), str(file1)),
+            ("hash1", str(file2), str(file2)),
+            ("hash3", str(file4), str(file4)),
+            ("hash3", str(file5), str(file5)),
         }
         assert rows == expected_rows
 
