@@ -33,17 +33,17 @@ organize-photos --source /path/to/first/album --destination /path/to/organized-p
 organize-photos --source /path/to/first/album --destination /path/to/organized-photos --copy
   ```
  
-+### Deleting Duplicates
-+
-+After running the `organize` command, you can delete duplicate files using the generated `duplicates.csv` report.
-+
-+```bash
-+# Run the dedupe command with the report
-+organize-photos dedupe --report /path/to/organized-photos/duplicates.csv
-+
-+# Skip the confirmation prompt
-+organize-photos dedupe --report /path/to/organized-photos/duplicates.csv --yes
-+```
+### Deleting Duplicates
+
+After running the `organize` command, you can delete duplicate files using the generated `duplicates.csv` report.
+
+```bash
+# Run the dedupe command with the report
+organize-photos dedupe --report /path/to/organized-photos/duplicates.csv
+
+# Skip the confirmation prompt
+organize-photos dedupe --report /path/to/organized-photos/duplicates.csv --yes
+```
 
 ## Dependencies
 
