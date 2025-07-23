@@ -27,7 +27,7 @@ Homepage = "https://github.com/example/organize-photos"
 Repository = "https://github.com/example/organize-photos"
 
 [project.scripts]
-organize-photos = "organize_photos.cli:main"
+organize-photos = "organize_photos.cli:cli"
 
 [project.optional-dependencies]
 dev = ["pytest", "piexif"]

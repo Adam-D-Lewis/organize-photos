@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 import piexif
 
+
 from PIL import Image
 
 from organize_photos.utils import (
@@ -15,6 +16,7 @@ from organize_photos.utils import (
     get_unique_filename,
     transfer_file,
     write_duplicate_report,
+    get_files_to_delete,
 )
 
 
@@ -231,3 +233,26 @@ def test_copy_image_without_date(tmp_path):
     expected_dir = destination_dir / "missing_date"
     assert (expected_dir / "test.jpg").is_file()
     assert image_path.exists()
+
+
+def test_get_files_to_delete(tmp_path):
+    """Test that get_files_to_delete correctly identifies files to be deleted."""
+    report_path = tmp_path / "duplicates.csv"
+    file1 = tmp_path / "a.jpg"
+    file2 = tmp_path / "b.jpg"
+    file3 = tmp_path / "c.jpg"
+    file4 = tmp_path / "d.jpg"
+
+    with open(report_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["hash", "new_filepath", "old_filepath"])
+        writer.writerow(["hash1", str(file1), "old/a.jpg"])
+        writer.writerow(["hash1", str(file2), "old/b.jpg"])
+        writer.writerow(["hash2", str(file3), "old/c.jpg"])
+        writer.writerow(["hash3", str(file4), "old/d.jpg"])
+
+    files_to_delete = get_files_to_delete(report_path)
+
+    # Expecting file2 to be deleted, as it's the second in the sorted list for hash1
+    assert len(files_to_delete) == 1
+    assert file2 in files_to_delete

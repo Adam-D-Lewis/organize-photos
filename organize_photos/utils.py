@@ -98,3 +98,37 @@ def write_duplicate_report(
             if len(file_list) > 1:
                 for old_path, new_path in file_list:
                     writer.writerow([hash_val, str(new_path), str(old_path)])
+
+
+
+def get_files_to_delete(report_path: Path) -> list[Path]:
+    """
+    Reads a duplicate report and returns a list of files to be deleted.
+
+    Args:
+        report_path: The path to the duplicates.csv file.
+
+    Returns:
+        A list of paths for files that should be deleted.
+    """
+    try:
+        with open(report_path, "r", newline="") as f:
+            reader = csv.reader(f)
+            next(reader)  # Skip header row
+            duplicates = defaultdict(list)
+            for row in reader:
+                if len(row) >= 2:
+                    file_hash, new_filepath = row[0], row[1]
+                    duplicates[file_hash].append(Path(new_filepath))
+    except (FileNotFoundError, StopIteration):
+        return []
+
+    files_to_delete = []
+    for _, file_list in duplicates.items():
+        if len(file_list) > 1:
+            # Sort by path to ensure consistent "first" file
+            sorted_files = sorted(file_list, key=lambda p: str(p))
+            # Add all but the first file to the deletion list
+            files_to_delete.extend(sorted_files[1:])
+
+    return files_to_delete
