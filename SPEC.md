@@ -41,16 +41,16 @@ Create a Python-based CLI tool that provides the following capabilities:
   organize-photos dedupe --report /path/to/organized-photos/duplicates.csv
   ```
 
-## 5. Logging and Output
+## 6. Logging and Output
 
 - **Progress Indication**: The tool will display a progress bar to show the user how many files have been processed out of the total number of files found.
 - **Error Logging**: Any errors that occur during processing (e.g., file read errors, permission issues) will be logged to a file named `errors.log` in the destination directory. The tool will not stop if it encounters an error with a single file; it will log the error and continue.
 
-## 6. Conflict Resolution
+## 7. Conflict Resolution
 
 - **File Name Conflicts**: If a file is to be moved to a destination where a file with the same name already exists, the tool will rename the new file by appending a hyphen and a number to the base name (e.g., `image.jpg` becomes `image-1.jpg`, then `image-2.jpg`, and so on).
 
-## 7. Implementation Tasks
+## 8. Implementation Tasks
 
 - [x] **CLI Argument Parsing**:
   - [x] Implement `argparse` or `click` to handle `--source` (multiple) and `--destination` arguments.
